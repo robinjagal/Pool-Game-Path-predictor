@@ -88,16 +88,15 @@ def path_of_white_ball(p1, p2, r):
         m = float('inf')
     else:
         m = float((p2.y - p1.y)/(p2.x - p1.x))
-    c = float(p1.y - m*p1.x)
-    var = r*(math.sqrt(1+(m*m)))
-    c1 = c + var
-    c2 = c - var
-    pathBallW.append(myline(m, c1))
-    print("y = %.2fx + %.2f" % (m, c1))
-    pathBallW.append(myline(m, c))
-    print("y = %.2fx + %.2f" % (m, c))
-    pathBallW.append(myline(m, c2))
-    print("y = %.2fx + %.2f" % (m, c2))
+    normal_slope = -1/m
+    cue_circle = Circle(p1, r)
+    normal_line = Line(p1, slope=normal_slope)
+    points = intersection(cue_circle, normal_line)
+    pathBallW.append(Ray(points[0], angle=m))
+    pathBallW.append(Ray(p1, angle=m))
+    pathBallW.append(Ray(points[1], angle=m))
+
+
 
 def distance_bw_points(p1, p2):
     var1 = float(p1.x - p2.x)
@@ -164,7 +163,7 @@ def ball_collide_first(cue_point, ball_coord):
     min_distance = 1e9
     first_ball = cue_point
     for coord in ball_coord:
-        ball_circle = Circle(Point(coord[0], coord[1]), RADIUS)
+        ball_circle = Circle(Point(coord[0], coord[1]), coord[2])
         if len(intersection(pathBallW[0], ball_circle)) >= 1 or len(intersection(pathBallW[2], ball_circle)) >= 1:
             d = cue_point.distance(ball_circle)
             if min_distance > d:
@@ -180,15 +179,27 @@ def ray_test(p1, p2, ball):
     for t in points:
         print(t)
 
+
+p1 = Point(12, 0)                    # White ball centre
+p2 = Point(6, 7)                     # Point from cue stick
+
 def main():
     image_address = '3.png'
     ball_coord, cue_coord, stick_coord = detection.detect_coordinates(image_address)
+    print(ball_coord, cue_coord, stick_coord)
+    if len(cue_coord) == 0 or len(stick_coord) == 0:
+        print("No point detected")
+        return
+
     cue_point = Point(cue_coord[0], cue_coord[1])
+    stick_point = Point(stick_coord[0], stick_coord[1])
+    path_of_white_ball(cue_point, stick_coord, cue_coord[2])
+    #path_of_white_ball(p1, p2, RADIUS)
     first_ball = ball_collide_first(cue_point, ball_coord)
     if first_ball == cue_point:
         print("No collision")
         return
-    print(ball_coord, cue_coord, stick_coord)
+
 
 
 if __name__ == '__main__':
