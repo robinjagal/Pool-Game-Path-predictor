@@ -116,7 +116,7 @@ def find_collision_point(cue_point, ball_point, radius):
     point2 = intersection(white_ball_ray.perpendicular_line(cue_point), Line(ball_point, slope=slope_line))
     while point1 != point2:
         mid_point = Point((point1.x+point2.x)/2, (point1.y+point2.y)/2)
-        mid_line = Line(mid_point, slope_line)
+        mid_line = Line(mid_point, slope=slope_line)
         intersect_point = intersection(mid_line, ball_circle)
         if len(intersect_point) == 2 and cue_point.distance(intersect_point[0]) >= cue_point.distance(intersect_point[1]):
             point_collision = intersect_point[1]
