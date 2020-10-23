@@ -1,5 +1,5 @@
 import math
-from sympy import Point, Line, Circle, intersection, Ray
+from sympy import Point, Line, Circle, intersection, Ray, pi
 from sympy import plot_implicit, cos, sin, symbols, Eq, And
 from sympy import symbols
 from sympy.plotting import plot
@@ -92,16 +92,10 @@ def path_of_white_ball(p1, p2, r):
     cue_circle = Circle(p1, r)
     normal_line = Line(p1, slope=normal_slope)
     points = intersection(cue_circle, normal_line)
-    pathBallW.append(Ray(points[0], angle=m))
-    pathBallW.append(Ray(p1, angle=m))
-    pathBallW.append(Ray(points[1], angle=m))
-
-
-
-def distance_bw_points(p1, p2):
-    var1 = float(p1.x - p2.x)
-    var2 = float(p1.y - p2.y)
-    return math.sqrt(var1*var1 + var2*var2)
+    middle_ray = Ray(p1, p2).rotate(pi)
+    pathBallW.append(middle_ray.parallel_line(points[0]))
+    pathBallW.append(middle_ray)
+    pathBallW.append(middle_ray.parallel_line(points[1]))
 
 def calculate_new_path(point_collision, ball_centre):
     if point_collision.y == ball_centre.y:
@@ -111,52 +105,37 @@ def calculate_new_path(point_collision, ball_centre):
     new_path = myline(slope_new_direction, ball_centre.y - slope_new_direction * ball_centre.x)
     pathBallN.append(new_path)
 
-def collision_using_binary(circle_centre, point_stick):
-    sign = pathBallW[1].m*circle_centre.x - circle_centre.y + pathBallW[1].c
-    white_ball_line = Line(Point(1, pathBallW[1].m + pathBallW[1].c), Point(0, pathBallW[1].c))
-    if sign < 0:
-        sign = -1
-    elif sign > 0:
-        sign = 1
-
-    l = circle_centre.y - pathBallW[1].m*circle_centre.x
-    r = pathBallW[1].c
-    ball = Circle(circle_centre, RADIUS)
-    point_collision = circle_centre
-    flag = 0
-    while 1:
-        mid = (l+r)/2.0
-        l1 = Line(Point(1, pathBallW[1].m + mid), Point(0, mid))
-        pointAB = intersection(l1, ball)
-        if len(pointAB) == 2 and point_stick.distance(pointAB[0]) >= point_stick.distance(pointAB[1]):
-            point_collision = pointAB[1]
-        elif len(pointAB) == 2 or len(pointAB) == 1:
-            point_collision = pointAB[0]
+def find_collision_point(cue_point, ball_point, radius):
+    point_collision = cue_point
+    slope_line = pathBallW[1].slope
+    white_ball_ray = pathBallW[1]
+    white_ball_line = Line(cue_point, slope=slope_line)
+    coeff = white_ball_line.coefficients
+    ball_circle = Circle(ball_point, radius)
+    point1 = cue_point
+    point2 = intersection(white_ball_ray.perpendicular_line(cue_point), Line(ball_point, slope=slope_line))
+    while point1 != point2:
+        mid_point = Point((point1.x+point2.x)/2, (point1.y+point2.y)/2)
+        mid_line = Line(mid_point, slope_line)
+        intersect_point = intersection(mid_line, ball_circle)
+        if len(intersect_point) == 2 and cue_point.distance(intersect_point[0]) >= cue_point.distance(intersect_point[1]):
+            point_collision = intersect_point[1]
+        elif len(intersect_point) == 2 or len(intersect_point) == 1:
+            point_collision = intersect_point[0]
         else:
-            flag = 1
-            print("Last valid line was ")
-            print("y = x*" + str(pathBallW[1].m) + " + " + str(mid))
-
-        point_temp = Point(float(2*point_collision.x-circle_centre.x), float(2*point_collision.y-circle_centre.y))
-        if white_ball_line.distance(point_temp) == 0 or flag == 1:
-            if point_collision == circle_centre:
-                print("No collision")
-                break
-            print("Point of collision: " + str(point_collision.x) + "," + str(point_collision.y))
-            calculate_new_path(point_collision, circle_centre)
-            plot_graph(point_collision, circle_centre, point_stick)
             break
 
-        var = pathBallW[1].m*point_temp.x - point_temp.y + pathBallW[1].c
-        if var < 0:
-            var = -1
-        elif var > 0:
-            var = 1
-
-        if var == sign:
-            l = point_temp.y - pathBallW[1].m*point_temp.x
+        point_extended = Point(float(2*point_collision.x - ball_point.x), float(2 * point_collision.y - ball_point.y))
+        if white_ball_ray.contains(point_extended):
+            break
         else:
-            r = point_temp.y - pathBallW[1].m*point_temp.x
+            val_point_extended = coeff[0]*point_extended.x + coeff[1]*point_extended.y + coeff[2]
+            val_mid_point = coeff[0]*mid_point.x + coeff[1]*mid_point.y + coeff[2]
+            if (val_mid_point < 0 and val_point_extended < 0) or (val_mid_point > 0 and val_point_extended > 0):
+                point2 = mid_point
+            else:
+                point1 = mid_point
+    return point_collision
 
 
 def ball_collide_first(cue_point, ball_coord):
@@ -170,15 +149,6 @@ def ball_collide_first(cue_point, ball_coord):
                 min_distance = d
                 first_ball = ball_circle
     return first_ball
-
-
-def ray_test(p1, p2, ball):
-    r = Ray(p1,p2)
-    c = Circle(Point(100,90), 5)
-    points = intersection(r, c)
-    for t in points:
-        print(t)
-
 
 p1 = Point(12, 0)                    # White ball centre
 p2 = Point(6, 7)                     # Point from cue stick
@@ -201,7 +171,6 @@ def main():
         return
 
 
-
 if __name__ == '__main__':
     main()
 
@@ -209,8 +178,7 @@ if __name__ == '__main__':
 p1 = Point(12, 0)                    # White ball centre
 p2 = Point(6, 7)                     # Point from cue stick
 ball_centre = Point(-8, 18)          # Ball which lies in the path
-#circle_radius = 5
 path_of_white_ball(p1, p2, RADIUS)
 #collision_using_binary(ball_centre, p1)
-ray_test(p1,p2,ball_centre)
+
 
