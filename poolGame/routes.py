@@ -1,6 +1,10 @@
 from flask import Flask, render_template
 from flask_socketio import SocketIO, emit
 from poolGame import app, socketio
+from cv2 import cv2
+import io
+import base64
+
 
 
 @app.route('/')
@@ -13,5 +17,7 @@ def video():
 
 @socketio.on('image')
 def image(data_image):
+    
     # emit the frame back
     emit('response_back', data_image)
+    

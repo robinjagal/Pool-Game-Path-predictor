@@ -4,6 +4,7 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Video</title>
+	<script async src="/static/opencv.js"></script>
 </head>
 <style>
 	#container {
@@ -26,12 +27,11 @@
         <img src="https://miro.medium.com/max/880/0*H3jZONKqRuAAeHnG.jpg" width="500" height="375" id="image_output">
     </div>
         
-        <script src="https://docs.opencv.org/master/opencv.js"></script>
-        <script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js" integrity="sha256-yr4fRk/GU1ehYJPAs8P4JlTgu0Hdsp4ZKrx8bDEDC3I=" crossorigin="anonymous"></script>
-		<script>
-			var video = document.querySelector("#videoElement");
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js" integrity="sha256-yr4fRk/GU1ehYJPAs8P4JlTgu0Hdsp4ZKrx8bDEDC3I=" crossorigin="anonymous"></script>
+		<script type="text/javascript">
+			var video = document.getElementById("videoElement");
             var socket = io();
-            
+			const image_id = document.getElementById('image_output');
 
 			if (navigator.mediaDevices.getUserMedia) {
 				navigator.mediaDevices.getUserMedia({ video: true })
@@ -43,29 +43,9 @@
 				console.log("Something went wrong!");
 				});
 			}
+		</script> 
 
-            const fps = 120;
-
-            setInterval(() => {
-                var type = "image/png"
-                const canvas = document.createElement('canvas');
-                canvas.width = video.videoWidth;
-                canvas.height = video.videoHeight;
-                canvas.getContext('2d').drawImage(video, 0, 0);
-                const data = canvas.toDataURL(type);
-                const image_id = document.getElementById('image_output');
-                image_id.src = data;
-                //socket.emit('image', data);
-            }, 10000/fps);
-
-
-            socket.on('response_back', function(image){
-                const image_id = document.getElementById('image_output');
-                image_id.src = image;
-            });
-            
-
-		</script>
+		<script type="text/javascript" src="/static/frameToServer.js"></script>
 		
 	
 </body>
