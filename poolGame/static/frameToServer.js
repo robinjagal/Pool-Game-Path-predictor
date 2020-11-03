@@ -1,15 +1,19 @@
-const fps = 60;
+const fps = 70;
 
 video.addEventListener('play', function(){
-    sendFrame(this)
+    sendFrame()
 })
 
-function sendFrame(video){
+function sendFrame(){
+    var video = document.getElementById("videoElement");
+    var type = "image/png";
     setInterval(() => {
+        
         var frame = capture(video, 1);
-        var data = frame.toDataURL(type);
+        var data = frame.toDataURL(type,0.8);
         //data = data.replace('data:' + type + ';base64,', '');
         socket.emit('image', data);
+        data.delete();
     }, 10000/fps);
 }
 
