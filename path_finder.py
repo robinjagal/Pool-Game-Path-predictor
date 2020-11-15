@@ -5,25 +5,20 @@ from sympy import symbols
 from sympy.plotting import plot
 import matplotlib.pyplot as plt
 import numpy as np
-#import ball_detection as detection
+import ball_detection as detection
 
 pathBallW = []   # contains the rays which the cue ball will follow
 pathBallN = []   # contains the lines which the normal ball will follow
 RADIUS = 5
 
 
-def path_of_white_ball_after_collision(m, c, r):
-    pass
-    
+def plot_graph(future_point, colliding_ball_info, cue_point):
 
-def plot_graph(point_inter, circle_centre, point_stick):
-    white_ball_centre = Point(float(2 * point_inter.x - circle_centre.x), float(2 * point_inter.y - circle_centre.y))
-    
     x = np.linspace(-30, 25, 10)
 
-    circle1 = plt.Circle((circle_centre.x,circle_centre.y), RADIUS, color='r')
-    circle2 = plt.Circle((point_stick.x, point_stick.y), RADIUS, color='black')
-    circle3 = plt.Circle((white_ball_centre.x, white_ball_centre.y), RADIUS, color='grey')
+    circle1 = plt.Circle((colliding_ball_info[0],colliding_ball_info[1]), RADIUS, color='r')
+    circle2 = plt.Circle((cue_point.x, cue_point.y), RADIUS, color='black')
+    circle3 = plt.Circle((future_point.x, future_point.y), RADIUS, color='grey')
 
     fig, ax = plt.subplots()
     ax.add_artist(circle1)
@@ -31,12 +26,12 @@ def plot_graph(point_inter, circle_centre, point_stick):
     ax.add_artist(circle3)
  
     x = np.linspace(-30, 25, 10)
+    white_ray = Ray(cue_point,future_point)
+
     y = pathBallW[0].slope*x + (pathBallW[0].p1.y - pathBallW[0].slope*pathBallW[0].p1.x)
     plt.plot(x, y, 'b')
     y = pathBallW[2].slope*x + (pathBallW[2].p1.y - pathBallW[2].slope*pathBallW[2].p1.x)
     plt.plot(x, y, 'b')
-
-    path_of_white_ball(circle_centre, point_inter, RADIUS)
     
     plt.axis("equal")
     plt.title('Graph')
@@ -72,42 +67,6 @@ def plot_white_ball_path():
     plt.show()
     
 
-def find_collision_point(cue_point, ball_point, radius):
-    point_collision = cue_point
-    slope_line = pathBallW[1].slope
-    white_ball_ray = pathBallW[1]
-    white_ball_line = Line(cue_point, slope=slope_line)
-    coeff = white_ball_line.coefficients
-    ball_circle = Circle(ball_point, radius)
-    point1 = cue_point
-    point2 = intersection(white_ball_line.perpendicular_line(cue_point), Line(ball_point, slope=slope_line))[0]
-    while 1:
-        mid_point = Point((point1.x+point2.x)/2, (point1.y+point2.y)/2)
-        mid_line = Line(mid_point, slope=slope_line)
-        intersect_point = intersection(mid_line, ball_circle)
-        if len(intersect_point) == 2 and cue_point.distance(intersect_point[0]) >= cue_point.distance(intersect_point[1]):
-            point_collision = intersect_point[1]
-        elif len(intersect_point) == 2 or len(intersect_point) == 1:
-            point_collision = intersect_point[0]
-        else:
-            break
-
-        point_extended = Point(float(2*point_collision.x - ball_point.x), float(2 * point_collision.y - ball_point.y))
-        if white_ball_ray.contains(point_extended):
-            break
-        else:
-            val_point_extended = coeff[0]*point_extended.x + coeff[1]*point_extended.y + coeff[2]
-            val_mid_point = coeff[0]*mid_point.x + coeff[1]*mid_point.y + coeff[2]
-            if (val_mid_point < 0 and val_point_extended < 0) or (val_mid_point > 0 and val_point_extended > 0):
-                point1 = mid_point
-            else:
-                point2 = mid_point
-        if point1 == point2:
-            break
-        print(point_collision)
-    return point_collision
-
-
 def ball_collide_first(cue_point, ball_coord):
     min_distance = 1e9
     first_ball = cue_point
@@ -121,8 +80,46 @@ def ball_collide_first(cue_point, ball_coord):
     return first_ball
 
 
+def during_collision(cue_point,radius, stick_point, ball_coord):
+    future_point = cue_point
+    collision_ball_info = cue_point
+    min_distance = 1e9
+    
+    temp_ray = Ray(cue_point,stick_point)
+    temp_Line = Line(cue_point,stick_point)
+    temp_circle = Circle(cue_point,radius)
+    temp_collision_points = intersection(temp_Line,temp_circle)
+
+    if temp_ray.contains(temp_collision_points[0]):
+        white_ray = Ray(cue_point,temp_collision_points[1])
+    else:
+        white_ray = Ray(cue_point,temp_collision_points[0])    
+
+    print(white_ray)
+
+    for coord in ball_coord:
+        enlarged_ball = Circle(Point(coord[0], coord[1]), coord[2]+radius)
+
+        intersect_point = intersection(white_ray,enlarged_ball)
+        
+        if len(intersect_point) == 2 and cue_point.distance(intersect_point[0]) >= cue_point.distance(intersect_point[1]):
+            temp_point = intersect_point[1]
+        elif len(intersect_point) == 2 or len(intersect_point) == 1:
+            temp_point = intersect_point[0]
+        else:
+            continue
+        
+        dist = cue_point.distance(temp_point)
+        if min_distance > dist:
+                min_distance = dist
+                future_point = temp_point
+                collision_ball_info = coord
+
+    return future_point, collision_ball_info
+
+
 def main():
-    image_address = '3.png'
+    image_address = 'new.png'
     ball_coord, cue_coord, stick_coord = detection.detect_coordinates(image_address)
     print(ball_coord, cue_coord, stick_coord)
     if len(cue_coord) == 0 or len(stick_coord) == 0:
@@ -133,31 +130,33 @@ def main():
     stick_point = Point(stick_coord[0], stick_coord[1])
     path_of_white_ball(cue_point, stick_coord, cue_coord[2])
     #path_of_white_ball(p1, p2, RADIUS)
-    first_ball = ball_collide_first(cue_point, ball_coord)
-    if first_ball == cue_point:
+    future_point, collision_ball_info  = during_collision(cue_point, cue_coord[2],stick_point,ball_coord)
+    if future_point == cue_point:
         print("No collision")
         return
+    else:
+        print(future_point)
 
 
 def test():
     p1 = Point(25, 0)                    # White ball centre
-    p2 = Point(30, 0)                     # Point from cue stick
+    p2 = Point(30, 2)                     # Point from cue stick
     ball_coord = []
     ball_coord.append([0,-8,5])          # Ball which lies in the path
     path_of_white_ball(p1, p2, RADIUS)
-    first_ball = ball_collide_first(p1, ball_coord)
-    if first_ball == p1:
+    future_point, collision_ball_info  = during_collision(p1, RADIUS,p2,ball_coord)
+
+    if future_point == p1:
         print("No collision")
     else:
-        point_collision = find_collision_point(p1,first_ball,RADIUS)
-        print(point_collision)
+        print(future_point)
         #plot_white_ball_path()
-        plot_graph(point_collision, first_ball, p1)
+        plot_graph(future_point, collision_ball_info, p1)
 
 
 
 if __name__ == '__main__':
-    test()
+    main()
     #main()
 
 
