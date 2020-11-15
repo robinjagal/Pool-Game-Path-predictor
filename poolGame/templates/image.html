@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image</title>
+</head>
+<body>
+    <input type="file" id="files" accept="image/*" />
+
+    <div id="container">
+        <img id="image_output">
+    </div>
+
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js" integrity="sha256-yr4fRk/GU1ehYJPAs8P4JlTgu0Hdsp4ZKrx8bDEDC3I=" crossorigin="anonymous"></script>
+    <script type="text/javascript">
+
+        document.getElementById('files').addEventListener('change', handleFileSelect, false);
+        var socket = io();
+
+        function handleFileSelect(ele){
+            var file = ele.target.files[0];
+            var fileReader = new FileReader();
+            fileReader.readAsDataURL(file)
+            fileReader.onload = () => {
+                var arrayBuffer = fileReader.result; 
+                socket.emit('image',arrayBuffer);
+            }
+        }
+
+        socket.on('response_back', function(data){
+            var image_output = document.getElementById('image_output');
+            image_output.src = data;
+        })
+
+    </script>
+    
+
+    
+</body>
+</html>

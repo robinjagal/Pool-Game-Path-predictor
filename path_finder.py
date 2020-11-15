@@ -8,7 +8,6 @@ import numpy as np
 import ball_detection as detection
 
 pathBallW = []   # contains the rays which the cue ball will follow
-pathBallN = []   # contains the lines which the normal ball will follow
 RADIUS = 5
 
 
