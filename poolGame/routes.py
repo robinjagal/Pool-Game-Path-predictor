@@ -23,6 +23,6 @@ def image(data_image):
     encoded_data = data_image.split(',')[1]
     nparr = np.fromstring(base64.b64decode(encoded_data), np.uint8)
     img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
-    cv2.imwrite("name.jpg",img)
+    
     emit('response_back', data_image)
     

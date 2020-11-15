@@ -1,19 +1,21 @@
-const fps = 70;
+const fps = 60;
 
 video.addEventListener('play', function(){
-    sendFrame()
+    sendFrame(this)
 })
 
-function sendFrame(){
-    var video = document.getElementById("videoElement");
+
+function sendFrame(video){
     var type = "image/png";
     setInterval(() => {
         
-        var frame = capture(video, 1);
-        var data = frame.toDataURL(type,0.8);
-        //data = data.replace('data:' + type + ';base64,', '');
+        const canvas = document.createElement('canvas');
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        canvas.getContext('2d').drawImage(video, 0, 0);
+        const data = canvas.toDataURL(type,0.001);
         socket.emit('image', data);
-        data.delete();
+        
     }, 10000/fps);
 }
 
