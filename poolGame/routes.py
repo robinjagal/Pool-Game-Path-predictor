@@ -12,6 +12,10 @@ import base64
 def home():
     return render_template('index.html')
 
+@app.route('/image')
+def image():
+    return render_template('image.html')
+
 @app.route('/livevideo')
 def video():
     return render_template('video-feed.html')
