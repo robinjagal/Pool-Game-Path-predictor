@@ -9,6 +9,13 @@
     <input type="file" id="files" accept="image/*" />
 
     <div id="container">
+        <img id="image_input">
+    </div>
+
+    <button onclick="image_process()">Process</button>
+</br>
+
+    <div id="container">
         <img id="image_output">
     </div>
 
@@ -17,15 +24,20 @@
 
         document.getElementById('files').addEventListener('change', handleFileSelect, false);
         var socket = io();
+        var image_input = document.getElementById('image_input');
 
         function handleFileSelect(ele){
             var file = ele.target.files[0];
             var fileReader = new FileReader();
             fileReader.readAsDataURL(file)
             fileReader.onload = () => {
-                var arrayBuffer = fileReader.result; 
-                socket.emit('image',arrayBuffer);
+                var arrayBuffer = fileReader.result;
+                image_input.src = arrayBuffer; 
             }
+        }
+
+        function image_process(){
+            socket.emit('image',image_input.src);
         }
 
         socket.on('response_back', function(data){
