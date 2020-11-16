@@ -5,26 +5,61 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Image</title>
 </head>
+
+<style>
+    #container1 {
+		margin: 0px;
+		width: 720px;
+		height: 375px;
+        background-color: black;
+	}
+    #container2 {
+		margin: 0px;
+		width: 720px;
+		height: 375px;
+        background-color: white;
+	}
+
+    img{
+        max-width: 100%;
+        max-height: 100%;
+    }
+    .container1{
+        width: 720px;
+    }
+    .container2{
+        width: 720px;
+    }
+
+
+</style>
+
 <body>
     <input type="file" id="files" accept="image/*" />
 
-    <div id="container">
+    <div id="container1">
         <img id="image_input">
     </div>
 
     <button onclick="image_process()">Process</button>
 </br>
 
-    <div id="container">
+    <div id="container2">
         <img id="image_output">
     </div>
 
     <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js" integrity="sha256-yr4fRk/GU1ehYJPAs8P4JlTgu0Hdsp4ZKrx8bDEDC3I=" crossorigin="anonymous"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-jcrop/0.9.15/js/jquery.Jcrop.js"></script>
+    
     <script type="text/javascript">
 
         document.getElementById('files').addEventListener('change', handleFileSelect, false);
         var socket = io();
         var image_input = document.getElementById('image_input');
+
+        
 
         function handleFileSelect(ele){
             var file = ele.target.files[0];
@@ -44,6 +79,21 @@
             var image_output = document.getElementById('image_output');
             image_output.src = data;
         })
+
+        
+        function finalCoordinates(c)
+        {
+        // variables can be accessed here as
+        // c.x, c.y, c.x2, c.y2, c.w, c.h
+        };
+
+        jQuery(function($) {
+        $('#container1').Jcrop({
+            //onSelect: selectedCoordinates,
+            //onChange: changingCoordinates,
+            onRelease: finalCoordinates,
+        });
+    });
 
     </script>
     
