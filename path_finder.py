@@ -113,12 +113,12 @@ def during_collision(cue_point,radius, stick_point, ball_coord):
                 min_distance = dist
                 future_point = temp_point
                 collision_ball_info = coord
-
+    print(min_distance)
     return future_point, collision_ball_info
 
 
 def main():
-    image_address = 'new.png'
+    image_address = '1.png'
     ball_coord, cue_coord, stick_coord = detection.detect_coordinates(image_address)
     print(ball_coord, cue_coord, stick_coord)
     if len(cue_coord) == 0 or len(stick_coord) == 0:
