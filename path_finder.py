@@ -92,8 +92,10 @@ def during_collision(cue_point,radius, stick_point, ball_coord):
 
 
 def main():
-    image_address = 'pool_Images/2.png'
-    ball_coord, cue_coord, stick_coord = detection.detect_coordinates(image_address)
+    image_address = str(input('Enter the image name: '))
+    image_address = "pool_Images/" + image_address
+    print(image_address) 
+    ball_coord, cue_coord, stick_coord = detection.detect_coordinates2(image_address)
     #print(cue_coord, ball_coord, stick_coord)
     if len(cue_coord) == 0 or len(stick_coord) == 0:
         print("No point detected")

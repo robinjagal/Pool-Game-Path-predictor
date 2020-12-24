@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video</title>
+    
+</head>
+
+<style>
+    #container1 {
+        margin: 0px;
+        width: 720px;
+        height: 375px;
+        background-color:black;
+    }
+    #container2 {
+        margin: 0px;
+        width: 720px;
+        height: 375px;
+        background-color: black;
+    }
+
+    video{
+        max-width: 100%;
+        max-height: 100%;
+    }
+    .container1{
+        width: 720px;
+    }
+    
+
+    img{
+        max-width: 100%;
+        max-height: 100%;
+    }
+    .container2{
+        width: 720px;
+    }
+
+    /*------------------------------------------------------------------*/
+    body {
+        background-image: url("Pooltable.jpg");
+        width: 100%;  
+        min-height: 100vh;
+         display: -webkit-box;
+        display: -webkit-flex;
+        display: -moz-box;
+        display: -ms-flexbox;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-items: center;
+        padding: 15px;
+        background-repeat: no-repeat;
+        background-size: cover;
+        background-position: center;
+        position: relative;
+        z-index: 1;         
+}
+    
+    body::before {
+  content: "";
+  display: block;
+  position: absolute;
+  z-index: -1;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  background: #00FF00;
+  background: -webkit-linear-gradient(bottom, #00FF00, #00c6fb);
+  background: -o-linear-gradient(bottom, #00FF00, #00c6fb);
+  background: -moz-linear-gradient(bottom, #00FF00, #00c6fb);
+  background: linear-gradient(bottom, #00FF00, #00c6fb);
+  opacity: 0.9;
+    }
+    
+    /*------------------------------------------------------------------
+[ Button ]*/
+.container-login100-form-btn {
+  width: 100%;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.login100-form-btn {
+  font-family: Montserrat-Bold;
+  font-size: 15px;
+  line-height: 1.5;
+  color: #e0e0e0;
+
+  width: 100%;
+  height: 50px;
+  border-radius: 25px;
+  background: #333333;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0 25px;
+
+  -webkit-transition: all 0.4s;
+  -o-transition: all 0.4s;
+  -moz-transition: all 0.4s;
+  transition: all 0.4s;
+
+  position: relative;
+  z-index: 1;
+}
+
+.login100-form-btn::before {
+  content: "";
+  display: block;
+  position: absolute;
+  z-index: -1;
+  width: 100%;
+  height: 100%;
+  border-radius: 25px;
+  top: 0;
+  left: 0;
+  background: #005bea;
+  background: -webkit-linear-gradient(left, #005bea, #00c6fb);
+  background: -o-linear-gradient(left, #005bea, #00c6fb);
+  background: -moz-linear-gradient(left, #005bea, #00c6fb);
+  background: linear-gradient(left, #005bea, #00c6fb);
+  -webkit-transition: all 0.4s;
+  -o-transition: all 0.4s;
+  -moz-transition: all 0.4s;
+  transition: all 0.4s;
+  opacity: 0;
+}
+
+.login100-form-btn:hover {
+  background: transparent;
+  color: #fff;
+}
+
+.login100-form-btn:hover:before {
+  opacity: 1;
+}
+
+/*------------------------------------------------------------------
+</style>
+
+<body>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js" integrity="sha256-yr4fRk/GU1ehYJPAs8P4JlTgu0Hdsp4ZKrx8bDEDC3I=" crossorigin="anonymous"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-jcrop/0.9.15/js/jquery.Jcrop.js"></script>
+
+    
+    <div class="limiter">
+        <div class="container-login100" >
+            
+            <input type="file" id="files" accept="video/*" />
+            
+            <table>
+                <tr>
+                    <td>
+                        <div id='container1' style="width:720px;float:left;">
+                            <video  controls autoplay id="video_input"></video>
+                        </div>
+                    </td>
+                    <td>
+                        <div id='container2' style="width:720px;float:right;">
+                            <img id="image_output">
+                        </div>
+                    </td>
+                </tr>
+            </table>
+            
+             </div>
+            <div class="container-login100-form-btn p-t-10">
+						 <button class="login100-form-btn" onclick="video_process()">Process</button>
+					</div>
+            
+            <div class="wrap-login100 p-t-190 p-b-30">
+                <form class="login100-form validate-form">
+                    
+
+                    <span class="login100-form-title p-t-20 p-b-45">
+                        Image Color Calibration
+                    </span>
+
+                 <div class="slidecontainer">
+                    <input type="range" min="0" max="255" value="60" class="slider" id="lh">lh: <span id="a"></span>
+
+                    <input type="range" min="0" max="255" value="0" class="slider" id="ls">ls: <span id="b"></span> 
+                    
+                     
+                    <input type="range" min="0" max="255" value="0" class="slider" id="lv">lv: <span id="c"></span>
+                    
+                     
+                    <input type="range" min="0" max="255" value="84" class="slider" id="uh">uh: <span id="d"></span> 
+                    
+                      
+                    <input type="range" min="0" max="255" value="255" class="slider" id="us">us: <span id="e"></span>
+                     
+                    <input type="range" min="0" max="255" value="255" class="slider" id="uv">uv: <span id="f"></span> 
+                     
+                      
+                    <input type="range" min="0" max="50" value="20" class="slider" id="min_rad">min_rad: <span id="g"></span>
+                      
+                    <input type="range" min="0" max="50" value="27" class="slider" id="max_rad">max_rad: <span id="h"></span> 
+
+                    <input type="range" min="0" max="255" value="75" class="slider" id="sensitivity">sensitivity: <span id="i"></span> 
+                    
+                     
+                 </div>
+                </form>
+            </div>
+             <div class="container-login100-form-btn p-t-10">
+						 <button class="login100-form-btn" onclick="send_settings()">Update</button>
+					</div>
+           
+        </div>
+    
+    
+    
+    <script>
+        document.getElementById('files').addEventListener('change', handleFileSelect, false);
+        var socket = io();
+        var video_input = document.getElementById('video_input');
+        var image_output = document.getElementById('image_output');
+        var canvasOutput = document.getElementById('myCanvas');
+        
+        var settings = {}
+        settings.lh = 60
+        settings.ls = 0
+        settings.lv = 0
+        settings.uh = 84
+        settings.us = 255
+        settings.uv = 255
+        settings.min_rad = 20
+        settings.max_rad = 27
+        settings.sensitivity = 75
+
+    
+        function handleFileSelect(ele){
+            var file = ele.target.files[0];
+            var fileReader = new FileReader();
+            fileReader.readAsDataURL(file)
+            fileReader.onload = () => {
+                var arrayBuffer = fileReader.result;
+                video_input.src = arrayBuffer; 
+            }
+        }
+
+        function video_process(){
+            const fps = 1;
+            var type = "image/jpg";
+            const canvas = document.createElement('canvas');
+            canvas.width = video_input.videoWidth;
+            canvas.height = video_input.videoHeight;
+            canvas.getContext('2d').drawImage(video_input, 0, 0);
+            const data = canvas.toDataURL(type,1);
+            socket.emit('image', data);
+            /*
+            setInterval(() => {
+                
+            }, 10000/fps);
+            */
+        }
+
+
+        socket.on('response_back', function(data){
+            console.log(data)
+            urlObject = URL.createObjectURL(new Blob([data.frame]));
+            image_output.src = urlObject
+        })
+
+
+        var lh = document.getElementById("lh");
+        var lh_output = document.getElementById("a");
+        lh_output.innerHTML = lh.value;
+        lh.oninput = function() 
+        {
+            lh_output.innerHTML = this.value;
+            settings.lh = parseInt(this.value)
+        }
+
+        var ls = document.getElementById("ls");
+        var ls_output = document.getElementById("b");
+        ls_output.innerHTML = ls.value;
+        ls.oninput = function() 
+        {
+            ls_output.innerHTML = this.value;
+            settings.ls = parseInt(this.value)
+        }
+
+        var lv = document.getElementById("lv");
+        var lv_output = document.getElementById("c");
+        lv_output.innerHTML = lv.value;
+        lv.oninput = function() 
+        {
+            lv_output.innerHTML = this.value;
+            settings.lv = parseInt(this.value)
+        }
+
+        var uh = document.getElementById("uh");
+        var uh_output = document.getElementById("d");
+        uh_output.innerHTML = uh.value;
+        uh.oninput = function() 
+        {
+            uh_output.innerHTML = this.value;
+            settings.uh = parseInt(this.value)
+        }
+
+        var us = document.getElementById("us");
+        var us_output = document.getElementById("e");
+        us_output.innerHTML = us.value;
+        us.oninput = function() 
+        {
+            us_output.innerHTML = this.value;
+            settings.us = parseInt(this.value)
+        }
+
+        var uv = document.getElementById("uv");
+        var uv_output = document.getElementById("f");
+        uv_output.innerHTML = uv.value;
+        uv.oninput = function() 
+        {
+            uv_output.innerHTML = this.value;
+            settings.uv = parseInt(this.value)
+        }
+
+        var min_rad = document.getElementById("min_rad");
+        var min_rad_output = document.getElementById("g");
+        min_rad_output.innerHTML =min_rad.value;
+        min_rad.oninput = function() 
+        {
+            min_rad_output.innerHTML = this.value;
+            settings.min_rad = parseInt(this.value)
+        }
+
+        var max_rad = document.getElementById("max_rad");
+        var max_rad_output = document.getElementById("h");
+        max_rad_output.innerHTML = max_rad.value;
+        max_rad.oninput = function() 
+        {
+            max_rad_output.innerHTML = this.value;
+            settings.max_rad = parseInt(this.value)
+        }
+
+        var sensitivity = document.getElementById("sensitivity");
+        var sensitivity_output = document.getElementById("i");
+        sensitivity_output.innerHTML = sensitivity.value;
+        sensitivity.oninput = function() 
+        {
+            sensitivity_output.innerHTML = this.value;
+            settings.sensitivity = parseInt(this.value)
+        }
+
+        function send_settings(){
+            socket.emit('settings', JSON.stringify(settings));
+        }
+
+        function finalCoordinates(c)
+        {
+        // variables can be accessed here as
+        // c.x, c.y, c.x2, c.y2, c.w, c.h
+        };
+
+        jQuery(function($) {
+        $('#container2').Jcrop({
+            //onSelect: selectedCoordinates,
+            //onChange: changingCoordinates,
+            onRelease: finalCoordinates,
+            });
+        });
+
+    </script>
+    
+    
+</body>
+</html>

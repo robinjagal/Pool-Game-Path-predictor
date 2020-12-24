@@ -8,7 +8,7 @@
 </head>
 <style>
 	#container {
-		margin: 0px auto;
+		margin: 0px;
 		width: 500px;
 		height: 375px;
 		border: 10px #333 solid;
@@ -20,13 +20,15 @@
 	}
 	</style>
 <body>
+	<input type="file" id="files" accept="video/*" />
+	<label for="videoElement">Input Video:</label>
     <div id="container">
         <video autoplay="true" id="videoElement">
-    </div>
+	</div>
+	<label for="image_output">Output Video:</label>
     <div id="container">
         <img src="https://miro.medium.com/max/880/0*H3jZONKqRuAAeHnG.jpg" width="500" height="375" id="image_output">
     </div>
-        
         <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js" integrity="sha256-yr4fRk/GU1ehYJPAs8P4JlTgu0Hdsp4ZKrx8bDEDC3I=" crossorigin="anonymous"></script>
 		<script type="text/javascript">
 			var video = document.getElementById("videoElement");
