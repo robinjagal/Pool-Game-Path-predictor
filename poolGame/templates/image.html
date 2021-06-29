@@ -72,7 +72,7 @@
         }
 
         function image_process(){
-            socket.emit('image',image_input.src);
+            socket.emit('image_same',image_input.src);
         }
 
         socket.on('response_back', function(data){

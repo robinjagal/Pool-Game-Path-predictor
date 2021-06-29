@@ -152,7 +152,7 @@
 </style>
 
 <body>
-    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js" integrity="sha256-yr4fRk/GU1ehYJPAs8P4JlTgu0Hdsp4ZKrx8bDEDC3I=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js" integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA==" crossorigin="anonymous"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-jcrop/0.9.15/js/jquery.Jcrop.js"></script>
@@ -263,7 +263,8 @@
             canvas.height = video_input.videoHeight;
             canvas.getContext('2d').drawImage(video_input, 0, 0);
             const data = canvas.toDataURL(type,1);
-            socket.emit('image', data);
+            socket.emit('process_image', data);
+            console.log("Frame sent");
             /*
             setInterval(() => {
                 
@@ -273,9 +274,14 @@
 
 
         socket.on('response_back', function(data){
+            console.log("Frame recieved");
             console.log(data)
             urlObject = URL.createObjectURL(new Blob([data.frame]));
             image_output.src = urlObject
+        })
+
+        socket.on('same', function(data){
+            image_output.src = data
         })
 
 

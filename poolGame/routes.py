@@ -30,18 +30,17 @@ def live_feed():
 def video_process():
     pass
 
-@socketio.on('image')
+@socketio.on('process_image')
 def image(data_image):
-    # emit the frame back
+    print("Frame received")
     sid = request.sid
     heading, encoded_data = data_image.split(',')
     nparr = np.fromstring(base64.b64decode(encoded_data), np.uint8)
     frame = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
-    
     frame = ball_detection.detect_coordinates(frame,settings[sid])
     _, im_arr = cv2.imencode('.png', frame)  # im_arr: image in Numpy one-dim array format.
     im_bytes = im_arr.tobytes()
-
+    print("Frame sent")
     emit('response_back', { 'frame': im_bytes })
 
 @socketio.on('settings')
@@ -52,6 +51,7 @@ def settings_variable(data):
 
 @socketio.on('connect')
 def connect():
+    print("User Connected")
     sid = request.sid
     settings[sid] = {
         "lh":60,
@@ -72,4 +72,11 @@ def disconnect():
     if sid in settings:
         settings.pop(sid)
     print('User disconnected')
+
+
+
+@socketio.on('image_same')
+def data_image_same(data):
+    print("Image received")
+    emit('same', data)
     

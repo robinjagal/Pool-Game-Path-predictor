@@ -60,15 +60,13 @@ def predict_path(circle_coordinates,cue_ball_coordinate,cue_stick_coordinate,fra
     cue_point = Point(cue_ball_coordinate[0], cue_ball_coordinate[1])
     stick_point = Point(cue_stick_coordinate[0], cue_stick_coordinate[1])
 
-    if prev_stick_point == stick_point and cue_point == prev_cue_point:
-        flag = 1
-    else:
-        future_point, collision_ball_info  = during_collision(cue_point, cue_ball_coordinate[2],stick_point,circle_coordinates)
-        prev_stick_point = stick_point
-        prev_cue_point = cue_point 
-        flag = 0
+   
+    future_point, collision_ball_info  = during_collision(cue_point, cue_ball_coordinate[2],stick_point,circle_coordinates)
+    prev_stick_point = stick_point
+    prev_cue_point = cue_point 
+    flag = 0
     
-    if flag==1 or future_point == cue_point:
+    if future_point == cue_point:
         print("No collision")
     else:
         print("Collision")

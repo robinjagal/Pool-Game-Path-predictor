@@ -45,7 +45,6 @@ def during_collision(cue_point,radius, stick_point, ball_coord):
     return future_point, collision_ball_info
 
 
-def 
 
 
 def main():
@@ -83,7 +82,6 @@ def main():
 
 if __name__ == '__main__':
     main()
-    #main()
 
 
 
